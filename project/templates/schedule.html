@@ -1,0 +1,32 @@
+{% extends "project/base.html" %}
+{% load bootstrap %}
+
+{% block content %}
+    <!-- @param: projects[] = プロジェクト一覧 -->
+    <div id="calendar"></div>
+    <script>
+        $(function() {
+               $('#calendar').fullCalendar({
+                   header: {
+
+                        left: 'prev,next today',
+                        right: 'title',
+                   },
+
+                   events: [
+                       {% for project in projects %}
+                           {
+
+                               title: '{{ project.project_name }}',
+                               start: '{{ project.start_date | date:"Y-m-d" }}',
+                               end: '{{ project.completed_date | date:"Y-m-d" }}',
+                               color: 'yellowgreen',
+                               textColor: 'black',
+                           },
+                       {% endfor %}
+                   ]
+
+               });
+            });
+    </script>
+{% endblock content %}

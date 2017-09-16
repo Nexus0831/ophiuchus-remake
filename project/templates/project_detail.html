@@ -1,0 +1,617 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="row">
+        <div class="col l12 m12">
+            {% if project.leader == user %}
+                <div class="fixed-action-btn">
+                    <a class="btn-floating btn-large blue-grey">
+                        <i class="large material-icons orange-text">menu</i>
+                    </a>
+                    <ul>
+                        {% if project.leader == user %}
+                            <li>
+                                <a class="modal-trigger tooltipped btn-floating blue-grey" href="#process-add"
+                                   data-position="left" data-delay="50" data-tooltip="プロセス追加">
+                                    <i class="material-icons orange-text">add</i>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="modal-trigger tooltipped btn-floating blue-grey" href="#project-edit"
+                                   data-position="left" data-delay="50" data-tooltip="プロジェクト編集">
+                                    <i class="material-icons orange-text">edit</i>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="modal-trigger tooltipped btn-floating blue-grey" href="#invitation"
+                                   data-position="left" data-delay="50" data-tooltip="招待">
+                                    <i class="material-icons orange-text">person_add</i>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="modal-trigger tooltipped btn-floating blue-grey" href="#recruitment"
+                                   data-position="left" data-delay="50" data-tooltip="募集">
+                                    <i class="material-icons orange-text">people</i>
+                                </a>
+                            </li>
+                        {% endif %}
+                        <li>
+                            <a class="tooltipped btn-floating blue-grey" data-position="left" data-delay="50"
+                               data-tooltip="リポジトリ"
+                               href="{{ project.repository_url }}" target="_blank">
+                                <i class="material-icons orange-text">launch</i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            {% endif %}
+            <div class="card blue-grey darken-1">
+
+                <div class="card-content white-text">
+                    <span class="card-title"
+                          style="font-size: 40px; font-family: serif">{{ project.project_name }}</span>
+                    <br>
+                    <p style="font-size: 20px">{{ project.start_date }} - {{ project.completed_date }}
+                        <br>
+                        <br>
+                        {{ project.over_view | linebreaksbr }}
+                    </p>
+                </div>
+
+                <div class="card-action">
+                    {% for user in member %}
+                        {% if project.leader == user %}
+                            <a class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="プロフィール"
+                               href="{% url 'profile_detail' user=user.username %}"
+                               style="font-weight: bold">{{ user }}</a>
+                        {% else %}
+                            <a class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="プロフィール"
+                               href="{% url 'profile_detail' user=user.username %}">{{ user }}</a>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col l6 m6">
+            <ul class="tabs">
+                <li class="tab col l3 m3"><a href="#before">開始前</a></li>
+                <li class="tab col l3 m3"><a class="active" href="#progress">進行中</a></li>
+                <li class="tab col l3 m3"><a href="#after">遅延</a></li>
+                <li class="tab col l3 m3"><a href="#complete">完了</a></li>
+            </ul>
+
+            <div id="before" class="col l12 m12">
+                {% for bef in before %}
+                    <div class="card blue-grey darken-1" style="text-align: left">
+                        <div class="card-content white-text">
+
+                        <span class="card-title"
+                              style="font-size: 30px; font-family: serif">{{ bef.process_name }}</span>
+                            <br>
+                            {% for person in persons %}
+                                {% if person.process == bef %}
+                                    {{ person.person }}　
+                                {% endif %}
+                            {% endfor %}
+                            <br>
+                            <br>
+                            <p style="font-size: 15px">{{ bef.process_start }} - {{ bef.process_completed }}
+                                <br>
+                                <br>
+                                {{ bef.process_contents | linebreaksbr }}
+                            </p>
+                        </div>
+
+
+                        <div class="card-action" style="text-align: right">
+                            {% for person in persons %}
+                                {% if person.process == bef %}
+                                    {% if person.person == user %}
+                                        <a class="process_complete tooltipped" data-position="bottom" data-delay="50"
+                                           data-tooltip="プロセスを完了する" href="{% url 'process_complete' pk=bef.pk %}">
+                                            <i class="material-icons">check</i>
+                                        </a>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if project.leader == user %}
+                                <a class="modal-trigger tooltipped" data-position="bottom" data-delay="50"
+                                   data-tooltip="プロセスを編集" href="#{{ bef.pk }}">
+                                    <i class="material-icons">edit</i>
+                                </a>
+                                <a class="process_delete tooltipped" data-position="bottom" data-delay="50"
+                                   data-tooltip="プロセスを削除" href="{% url 'process_delete' pk=bef.pk %}">
+                                    <i class="material-icons">delete</i>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div id="progress" class="col l12 m12">
+                {% for pro in progress %}
+                    <div class="card blue-grey darken-1" style="text-align: left">
+                        <div class="card-content white-text">
+
+                        <span class="card-title"
+                              style="font-size: 30px; font-family: serif">{{ pro.process_number }}.{{ pro.process_name }}</span>
+                            <br>
+                            {% for person in persons %}
+                                {% if person.process == pro %}
+                                    {{ person.person }}　
+                                {% endif %}
+                            {% endfor %}
+                            <br>
+                            <br>
+                            <p style="font-size: 15px">{{ pro.process_start }} - {{ pro.process_completed }}
+                                <br>
+                                <br>
+                                {{ pro.process_contents | linebreaksbr }}
+                            </p>
+                        </div>
+
+                        <div class="card-action" style="text-align: right">
+                            {% for person in persons %}
+                                {% if person.process == pro %}
+                                    {% if person.person == user %}
+                                        <a class="process_complete tooltipped" data-position="bottom" data-delay="50"
+                                           data-tooltip="プロセスを完了する" href="{% url 'process_complete' pk=pro.pk %}">
+                                            <i class="material-icons">check</i>
+                                        </a>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if project.leader == user %}
+                                <a class="modal-trigger tooltipped" data-position="bottom" data-delay="50"
+                                   data-tooltip="プロセスを編集" href="#{{ pro.pk }}">
+                                    <i class="material-icons">edit</i>
+                                </a>
+                                <a class="process_delete tooltipped" data-position="bottom" data-delay="50"
+                                   data-tooltip="プロセスを削除" href="{% url 'process_delete' pk=pro.pk %}">
+                                    <i class="material-icons">delete</i>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div id="after" class="col l12 m12">
+                {% for aft in after %}
+                    <div class="card blue-grey darken-1" style="text-align: left">
+                        <div class="card-content white-text">
+
+                        <span class="card-title"
+                              style="font-size: 30px; font-family: serif">{{ aft.process_name }}</span>
+                            <br>
+                            {% for person in persons %}
+                                {% if person.process == aft %}
+                                    {{ person.person }}　
+                                {% endif %}
+                            {% endfor %}
+                            <br>
+                            <br>
+                            <p style="font-size: 15px">{{ aft.process_start }} - {{ aft.process_completed }}
+                                <br>
+                                <br>
+                                {{ aft.process_contents | linebreaksbr }}
+                            </p>
+                        </div>
+
+                        <div class="card-action" style="text-align: right">
+                            {% for person in persons %}
+                                {% if person.process == aft %}
+                                    {% if person.person == user %}
+                                        <a class="process_complete tooltipped" data-position="bottom" data-delay="50"
+                                           data-tooltip="プロセスを完了する" href="{% url 'process_complete' pk=aft.pk %}">
+                                            <i class="material-icons">check</i>
+                                        </a>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                            {% if project.leader == user %}
+                                <a class="modal-trigger tooltipped" data-position="bottom" data-delay="50"
+                                   data-tooltip="プロセスを編集" href="#{{ aft.pk }}">
+                                    <i class="material-icons">edit</i>
+                                </a>
+
+                                <a class="process_delete tooltipped" data-position="bottom" data-delay="50"
+                                   data-tooltip="プロセスを削除" href="{% url 'process_delete' pk=aft.pk %}">
+                                    <i class="material-icons">delete</i>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div id="complete" class="col l12 m12">
+                {% for com in completed %}
+                    <div class="card blue-grey darken-1" style="text-align: left">
+                        <div class="card-content white-text">
+
+                        <span class="card-title"
+                              style="font-size: 30px; font-family: serif">{{ com.process_number }}.{{ com.process_name }}</span>
+                            <br>
+                            {% for person in persons %}
+                                {% if person.process == com %}
+                                    {{ person.person }}
+                                {% endif %}
+                            {% endfor %}
+                            <br>
+                            <br>
+                            <p style="font-size: 15px">{{ com.process_start }} - {{ com.process_completed }}
+                                <br>
+                                <br>
+                                {{ com.process_contents | linebreaksbr }}
+                            </p>
+                        </div>
+
+                        {% if project.leader == user %}
+                            <div class="card-action" style="text-align: right">
+                                <a class="process_delete tooltipped" data-position="bottom" data-delay="50"
+                                   data-tooltip="プロセスを削除" href="{% url 'process_delete' pk=com.pk %}">
+                                    <i class="material-icons">delete</i>
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="col l6 m6">
+            <ul class="tabs">
+                <li class="tab col l4 m4"><a class="active" href="#issues">Issues</a></li>
+                <li class="tab col l4 m4"><a href="#branch">Branch</a></li>
+                <li class="tab col l4 m4"><a href="#log">Log</a></li>
+            </ul>
+            <div id="issues" class="col l12 m12">
+                {% for issue in issues %}
+                    <div class="card blue-grey darken-1" style="text-align: left">
+                        <div class="card-content white-text">
+
+                        <span class="card-title"
+                              style="font-size: 30px; font-family: serif">{{ issue.title }}</span>
+                        </div>
+
+                        <div class="card-action" style="text-align: right">
+                            <a class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="詳細"
+                               href="{{ issue.url }}" target="_blank">
+                                <i class="material-icons">launch</i>
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div id="branch" class="col l12 m12">
+                {% for branch in branches %}
+                    <div class="card blue-grey darken-1" style="text-align: left">
+                        <div class="card-content white-text">
+                            <span class="card-title"
+                                  style="font-size: 30px; font-family: serif">{{ branch }}</span>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div id="log" class="col l12 m12">
+                <div class="card blue-grey darken-1" style="text-align: left">
+                    <div class="card-content white-text" style="overflow: scroll">
+                        <div class="row" style="text-align: center; font-weight: bold">
+                            <div class="col l3 hide-on-med-and-down">日時</div>
+                            <div class="col m12 l9 ">内容</div>
+                        </div>
+                        <div class="row">
+                            <div class="col l4 hide-on-med-and-down">
+                                {% for log in logs %}
+                                    {{ log.date | date:"Y年n月d日 H:i" }}<br>
+                                {% endfor %}
+                            </div>
+                            <div class="col m12 l8">
+                                {% for log in logs %}
+                                    {{ log.history }}<br>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div id="process-add" class="modal">
+                <div class="row">
+
+                    <form action="" method="post">
+                        <div class="modal-content">
+                            {% csrf_token %} <!-- ※必須　CSRFトークンを使用することでクロスサイトリクエスト偽造を防ぐ-->
+
+                            <div class="row">
+                                <div class="input-field col l3 m3">
+                                    <input name="number" id="process_number" type="number" min="1" required="">
+                                    <label for="process_number">プロセス番号</label>
+                                </div>
+                                <div class="input-field col l9 m9">
+                                    <input id="process_name" name="process_name" type="text" maxlength="30" required="">
+                                    <label for="process_name">プロセス名</label>
+                                </div>
+                            </div>
+
+                            <div class="input-field col l12 m12">
+                                <select multiple name="person" required="">
+                                    <option value="" disabled selected>担当者を選択 ※複数選択可</option>
+                                    {% for user in member %}
+                                        <option value={{ user }}>{{ user.username }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="input-field col l12 m12">
+                        <textarea id="process_contents" class="materialize-textarea" name="process_contents"
+                                  required=""></textarea>
+                                <label for="process_contents">プロセス内容</label>
+                            </div>
+
+                            <div class="row">
+                                <div class="input-field col l6 m6">
+                                    <input type="text" class="datepicker" id="process_start" name="process_start"
+                                           required="">
+                                    <label for="process_start">プロセス開始日</label>
+                                </div>
+
+                                <div class="input-field col l6 m6">
+                                    <input type="text" class="datepicker" id="process_completed"
+                                           name="process_completed"
+                                           required="">
+                                    <label for="process_completed">プロセス完了予定日</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer" style="text-align: center">
+                            <button type="submit" name="process-add" class="btn waves-effect waves-light">
+                                追加
+                                <i class="material-icons right">send</i></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div id="project-edit" class="modal modal-fixed-footer">
+                <div class="row">
+                    <form action="" method="post">
+                        <div class="modal-content">
+                            {% csrf_token %} <!-- ※必須　CSRFトークンを使用することでクロスサイトリクエスト偽造を防ぐ-->
+                            <div class="input-field col l12 m12">
+                                <input id="project_name" type="text" maxlength="30" name="name"
+                                       value="{{ project.project_name }}" required="">
+                                <label for="project_name">プロジェクト名</label>
+                            </div>
+
+
+                            <div class="input-field col l12 m12">
+                            <textarea id="over_view" class="materialize-textarea" name="over_view"
+                                      required="">{{ project.over_view }}</textarea>
+                                <label for="over_view">概要</label>
+                            </div>
+
+                            <div class="row">
+                                <div class="input-field col l4 m4">
+                                    <select name="repository_id" required="">
+                                        <option value="" disabled>紐付けるリポジトリを選択</option>
+                                        {% for repo in repositories %}
+                                            {% if repo.name == project.repository_name %}
+                                                <option value={{ repo.id }} selected>{{ repo.name }}</option>
+                                            {% else %}
+                                                <option value={{ repo.id }}>{{ repo.name }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="input-field col l4 m4">
+                                    <input type="text" class="datepicker" id="start-day" name="start_date"
+                                           value="{{ project.start_date | date:"Y-m-d" }}" required="">
+                                    <label for="start-day">プロジェクト開始日</label>
+                                </div>
+
+                                <div class="input-field col l4 m4">
+                                    <input type="text" class="datepicker" id="complete-date" name="completed_date"
+                                           value="{{ project.completed_date | date:"Y-m-d" }}" required="">
+                                    <label for="complete-day">プロジェクト完了予定日</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer" style="text-align: center">
+                            <button type="submit" name="project-edit" class="btn waves-effect waves-light">
+                                変更
+                                <i class="material-icons right">send</i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            {% for process in processes %}
+                <div id="{{ process.pk }}" class="modal ">
+                    <div class="row">
+                        <form action="" method="post">
+                            <div class="modal-content">
+
+                                {% csrf_token %} <!-- ※必須　CSRFトークンを使用することでクロスサイトリクエスト偽造を防ぐ-->
+
+                                <div class="row">
+                                    <div class="input-field col l3 m3">
+                                        <input name="number" id="process_number" type="number" min="1"
+                                               value={{ process.process_number }} required="">
+                                        <label for="process_number">プロセス番号</label>
+                                    </div>
+                                    <div class="input-field col l9 m9">
+                                        <input id="process_name" name="process_name" type="text" maxlength="30"
+                                               value="{{ process.process_name }}" required=""/>
+                                        <label for="process_name">プロセス名</label>
+                                    </div>
+                                </div>
+
+                                <div class="input-field col l12 m12">
+                                    <select multiple name="person" required="">
+                                        <option value="" disabled selected>Assign Person</option>
+                                        {% for user in member %}
+                                            <option value={{ user }}>{{ user.username }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="input-field col l12 m12">
+                                    <textarea id="process_contents" class="materialize-textarea" name="process_contents"
+                                              required="">{{ process.process_contents }}</textarea>
+                                    <label for="process_contents">プロセス内容</label>
+                                </div>
+
+                                <div class="row">
+                                    <div class="input-field col l6 m6">
+                                        <input type="text" class="datepicker" id="process_start" name="process_start"
+                                               value="{{ process.process_start | date:"Y-m-d" }}">
+                                        <label for="process_start">プロセス開始日</label>
+                                    </div>
+
+                                    <div class="input-field col l6 m6">
+                                        <input type="text" class="datepicker" id="process_completed"
+                                               name="process_completed"
+                                               value="{{ process.process_completed | date:"Y-m-d" }}">
+                                        <label for="process_completed">プロセス完了予定日</label>
+                                    </div>
+                                </div>
+                                <input type="hidden" name="pk" value={{ process.pk }}>
+                            </div>
+
+                            <div class="modal-footer" style="text-align: center">
+                                <button type="submit" name="process-edit" class="btn waves-effect waves-light">
+                                    変更
+                                    <i class="material-icons right">send</i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+
+            <!-- @todo:招待作成 -->
+            <div id="invitation" class="modal modal-fixed-footer">
+                <div class="row">
+                    <form action="" method="post">
+                        <div class="modal-content">
+
+                            {% csrf_token %} <!-- ※必須　CSRFトークンを使用することでクロスサイトリクエスト偽造を防ぐ-->
+
+                            <div class="input-field col l12 m12">
+                                <select multiple name="reception_user" required="">
+                                    <option value="" disabled selected>招待するユーザー　※複数選択可</option>
+                                    {% for user in users %}
+                                        <option value={{ user }}>{{ user.username }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="input-field col l12 m12">
+                                <input id="title" name="title" type="text" maxlength="50" required=""/>
+                                <label for="title">タイトル</label>
+                            </div>
+
+                            <div class="input-field col l12 m12">
+                                    <textarea id="text" class="materialize-textarea" name="text"
+                                              required=""></textarea>
+                                <label for="text">本文</label>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer" style="text-align: center">
+                            <button type="submit" name="invitation" class="save btn btn-primary btn-wide">
+                                送信
+                                <i class="material-icons right">send</i>
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+            <div id="recruitment" class="modal modal-fixed-footer">
+                <div class="row">
+                    <form action="" method="post">
+                        <div class="model-content">
+                            {% csrf_token %}
+                            <div class="input-field col l12 m12">
+                                <input id="title" name="title" type="text" maxlength="50" required=""/>
+                                <label for="title">タイトル</label>
+                            </div>
+
+                            <div class="input-field col l12 m12">
+                                <textarea id="text" class="materialize-textarea" name="text" required=""></textarea>
+                                <label for="text">本文</label>
+                            </div>
+
+                            <div class="input-field col l12 m12">
+                                <textarea id="requirement" class="materialize-textarea" name="requirement"
+                                          required=""></textarea>
+                                <label for="requirement">参加資格</label>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer" style="text-align: center">
+                            <button type="submit" name="recruitment" class="save btn btn-primary btn-wide">
+                                投稿
+                                <i class="material-icons right">send</i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+
+            <script>
+                $(document).ready(function () {
+                    $('select').material_select();
+                    $('.tooltipped').tooltip({delay: 50});
+
+                    if ('{{ toast }}' === 'process_add') {
+                        Materialize.toast('プロセスを追加しました', 4000);
+                    } else if ('{{ toast }}' === 'process_edit') {
+                        Materialize.toast('プロセスを編集しました', 4000);
+                    } else if ('{{ toast }}' === 'invitation') {
+                        Materialize.toast('招待メッセージを送信しました', 4000);
+                    } else if ('{{ toast }}' === 'project_edit') {
+                        Materialize.toast('プロジェクトを編集しました', 4000);
+                    } else if ('{{ toast }}' === 'process-complete') {
+                        Materialize.toast('プロセスを完了しました')
+                    } else if ('{{ toast }}' === 'recruitment') {
+                        Materialize.toast('ラウンジに募集を投稿しました', 4000);
+                    }
+
+                });
+
+                $('#project_delete').click(function () {
+                    if (!confirm('本当に削除しますか？')) {
+                        return false;
+                    }
+                });
+
+                $('.process_delete').click(function () {
+                    if (!confirm('本当に削除しますか？')) {
+                        return false;
+                    }
+                });
+
+                $('.process_complete').click(function () {
+                    if (!confirm('選択したプロセスを完了しますか？')) {
+                        return false;
+                    }
+                });
+            </script>
+
+{% endblock content %}

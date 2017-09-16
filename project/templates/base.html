@@ -1,0 +1,77 @@
+<!-- ophiuchus全体に共通となることを記述する　（例）どのページにいっても常に表示したいものなど -->
+
+{% load staticfiles %} <!-- 静的ファイルを全て読み込む　-->
+
+<html>
+<head>
+    <title>Ophiuchus</title>
+
+    <script src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/materialize.css' %}">
+    <script src="{% static 'js/materialize.min.js' %}"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.ico' %}"/>
+
+    <meta charset="UTF-8">
+</head>
+
+<body>
+<nav>
+    <div class="nav-wrapper">
+        <a href="/" class="brand-logo center" style="font-family: serif;">
+            Ophiuchus
+
+        </a>
+        <ul id="nav-mobile" class="left">
+            {% if not user.is_anonymous %}
+                <li><a href="{% url 'profile_detail' user=user.username %}">プロフィール</a></li>
+                <li><a href="{% url 'Message' %}">メッセージ</a></li>
+                <li><a href="{% url 'lounge' %}">ラウンジ</a></li>
+            {% endif %}
+        </ul>
+        <ul id="nav-mobile" class="right">
+            {% if not user.is_anonymous %}
+                <li><a href="{% url 'logout' %}" id="logout">ログアウト</a></li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>
+
+
+<div class="row">
+    <div class="col l12 m12">
+        {% block content %}
+        {% endblock %}
+    </div>
+</div>
+<script>
+    $('#logout').click(function () {
+        if (!confirm('ログアウトしてよろしいですか？')) {
+            return false;
+        }
+    });
+
+    $(document).ready(function () {
+        $('.modal').modal();
+        $('select').material_select();
+
+
+        $('.datepicker').pickadate({
+            monthsFull: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
+            monthsShort: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
+            weekdaysFull: ["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"],
+            weekdaysLetter: ["日", "月", "火", "水", "木", "金", "土"],
+            labelMonthNext: "翌月",
+            labelMonthPrev: "前月",
+            labelMonthSelect: "月を選択",
+            labelYearSelect: "年を選択",
+            closeOnSelect: false,
+            today: "今日",
+            clear: "クリア",
+            close: "決定",
+            format: "yyyy-mm-dd"
+        });
+    });
+</script>
+</body>
+</html>

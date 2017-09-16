@@ -1,0 +1,19 @@
+<!-- ログアウトした際に表示するページ-->
+
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="card blue-grey darken-1">
+        <div class="card-content white-text">
+            <h4 style="font-family: serif">ご利用ありがとうございました。良い週末を</h4>
+            <form action="" method="post" role="form">
+                {% csrf_token %}
+
+                <button type="button" onclick="location.href='{% url 'social:begin' 'github' %}'"
+                        class="waves-effect waves-light btn white-text">
+                    もう一度ログイン
+                </button>
+            </form>
+        </div>
+    </div>
+{% endblock content %}

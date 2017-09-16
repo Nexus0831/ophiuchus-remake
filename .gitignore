@@ -1,0 +1,16 @@
+# See https://help.github.com/ignore-files/ for more about ignoring files.
+
+# not upload
+/.idea
+/OphiuchusRemake/__pycache__/
+/project/migrations/
+/project/__pycache__/
+
+# Used CSS Framework Materialize
+/static/
+
+# local_settings
+/project/local_settings.py
+
+# DateBase sqlite3
+/db.sqlite3

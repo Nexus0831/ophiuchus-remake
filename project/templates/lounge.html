@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="row">
+        <div class="col l12 m12">
+            <ul class="collapsible" data-collapsible="accordion">
+                {% for rec in recruitment %}
+                    <li>
+                        <div class="collapsible-header blue-grey" style="text-align: center; font-size: 30px">
+                            {{ rec.title }}
+                        </div>
+                        <div class="collapsible-body white-text" style="font-size: 18px">
+                            募集者: <a class="tooltipped" data-position="bottom" data-delay="50"
+                                          data-tooltip="プロフィール" href="{% url 'profile_detail' user=rec.recruiter.username %}"
+                                          >{{ rec.recruiter }}</a>
+                            <br>
+                            <br>
+                            プロジェクトのリポジトリ: <a class="tooltipped" data-position="bottom" data-delay="50"
+                                                      data-tooltip="GitHub外部リンク"
+                                                      href="{{ rec.project.repository_url }}"
+                                                      target="_blank">{{ rec.project.repository_name }}</a>
+                            <br>
+                            <br>
+                            詳細: {{ rec.text | linebreaksbr }}
+                            <br>
+                            <br>
+                            応募資格: {{ rec.requirement | linebreaksbr }}
+                            <div style="width: 100%; text-align: right">
+                                <br>
+                                <a class="waves-effect waves-light btn white-text modal-trigger" href="#apply">Apply</a>
+                            </div>
+                        </div>
+                    </li>
+                    <div id="apply" class="modal">
+                        <div class="row">
+                            <form action="" method="post">
+                                <div class="modal-content">
+                                    {% csrf_token %} <!-- ※必須　CSRFトークンを使用することでクロスサイトリクエスト偽造を防ぐ-->
+                                    <div class="input-field col l12 m12">
+                                        <input id="title" name="title" type="text" maxlength="50" required=""/>
+                                        <label for="title">Title</label>
+                                    </div>
+
+                                    <div class="input-field col l12 m12">
+                                        <textarea id="reason" class="materialize-textarea" name="reason"
+                                                  required=""></textarea>
+                                        <label for="reason">Reasons for Application</label>
+                                    </div>
+                                    <input type="hidden" name="pk" value="{{ rec.pk }}">
+                                </div>
+
+
+                                <div class="modal-action" style="text-align: center">
+                                    <button type="submit" name="process-add" class="btn waves-effect waves-light">
+                                        Send
+                                        <i class="material-icons right">send</i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </ul>
+        </div>
+
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('.collapsible').collapsible();
+        });
+    </script>
+{% endblock content %}

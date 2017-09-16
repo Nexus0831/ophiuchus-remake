@@ -1,0 +1,28 @@
+<!-- ログインするためのページ -->
+
+{% extends "base.html" %}
+{% load bootstrap %}
+
+{% block content %}
+
+    <div class="card blue-grey darken-1">
+        <div class="card-content white-text">
+            <h4 style="font-family: serif">お持ちのGitHubアカウントで利用していただけます</h4>
+
+            <form action="" method="post" role="form">
+                {% csrf_token %}
+
+                <button type="button" onclick="location.href='{% url 'social:begin' 'github' %}'"
+                        class="waves-effect waves-light btn white-text">
+                    GitHubアカウントでログイン
+                </button>
+
+                <a type="button" href="https://github.com" class="waves-effect waves-light btn white-text" target="_blank">
+                    GitHubアカウントをお持ちでない方はこちら
+                </a>
+                <input name="next" type="hidden" value="{{ next }}"/>
+            </form>
+        </div>
+    </div>
+
+{% endblock content %}

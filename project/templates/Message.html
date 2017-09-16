@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="row">
+        <div class="col l12 m12">
+            <ul class="tabs">
+                <li class="tab col l6 m6"><a class="active" href="#invitation">招待メッセージ</a></li>
+                <li class="tab col l6 m6"><a href="#application">申請メッセージ</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="invitation" class="col l12 m12">
+        {% for invitation in invitations %}
+            <ul class="collapsible" data-collapsible="accordion">
+                <li>
+                    <div class="collapsible-header blue-grey" style="text-align: center; font-size: 30px">
+                        {{ invitation.title }}
+                    </div>
+                    <div class="collapsible-body white-text" style="font-size: 18px">
+                        招待者: <a class="tooltipped" data-position="bottom" data-delay="50"
+                                    data-tooltip="プロフィール" href="{% url 'profile_detail' user=invitation.send_user.username %}"
+                                    >{{ invitation.send_user }}</a>
+                        <br>
+                        <br>
+                        プロジェクトのリポジトリ: <a class="tooltipped" data-position="bottom" data-delay="50"
+                                                  data-tooltip="GitHub外部リンク"
+                                                  href="{{ invitation.project.repository_url }}"
+                                                  target="_blank">{{ invitation.project.repository_name }}</a>
+                        <br>
+                        <br>
+                        詳細: {{ invitation.text | linebreaksbr }}
+                        <div style="width: 100%; text-align: right">
+                            <br>
+                            <form action="" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" value="{{ invitation.pk }}" name="pk">
+                                <button class="waves-effect waves-light btn white-text" type="submit"
+                                        name="invitation_yes">Yes
+                                </button>
+                                <button class="waves-effect waves-light btn white-text" type="submit"
+                                        name="invitation_no">No
+                                </button>
+                            </form>
+
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        {% endfor %}
+    </div>
+
+    <div id="application" class="col l12 m12">
+        {% for mes in message %}
+            <ul class="collapsible" data-collapsible="accordion">
+                <li>
+                    <div class="collapsible-header blue-grey" style="text-align: center; font-size: 30px">
+                        {{ mes.title.title }}
+                    </div>
+                    <div class="collapsible-body white-text" style="font-size: 18px">
+                        申請者: <a class="tooltipped" data-position="bottom" data-delay="50"
+                                   data-tooltip="プロフィール" href="{% url 'profile_detail' user=mes.send_user.username %}"
+                                   >{{ mes.send_user }}</a>
+                        <br>
+                        <br>
+                        応募したプロジェクト: <a class="tooltipped" data-position="bottom" data-delay="50"
+                                                data-tooltip="GitHub外部リンク"
+                                                href="{{ mes.project.repository_url }}"
+                                                target="_blank">{{ mes.project.repository_name }}</a>
+                        <br>
+                        <br>
+                        応募理由: {{ mes.text | linebreaksbr }}
+                        <div style="width: 100%; text-align: right">
+                            <br>
+                            <form action="" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" value="{{ mes.pk }}" name="pk">
+                                <button class="waves-effect waves-light btn white-text" type="submit"
+                                        name="application_yes">Yes
+                                </button>
+                                <button class="waves-effect waves-light btn white-text" type="submit"
+                                        name="application_no">No
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        {% endfor %}
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            if ('{{ toast }}' === 'invitation-yes') {
+                Materialize.toast('プロジェクトに参加しました', 4000);
+            } else if ('{{ toast }}' === 'invitation-no') {
+                Materialize.toast('招待を断りました', 4000);
+            } else if ('{{ toast }}' === 'application-yes') {
+                Materialize.toast('ユーザがプロジェクトに参加しました', 4000);
+            } else if ('{{ toast }}' === 'application-no') {
+                Materialize.toast('申請を断りました', 4000);
+            }
+
+        });
+    </script>
+{% endblock content %}
