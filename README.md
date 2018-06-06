@@ -1,5 +1,7 @@
 # 開発管理Webアプリケーション Ophiuchus ver-0.7.0
 
+![ophiuchus](https://raw.githubusercontent.com/Nexus0831/GitHub-images/master/ophiuchus/ophiuchus.png)
+
 ## 仕様
 - ログインにはGitHubアカウントを使用
 - GitHubAPIを利用することで１つのプロジェクトに１つのリポジトリを紐付け管理する
