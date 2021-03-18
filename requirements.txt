@@ -10,7 +10,7 @@ idna==2.6
 numpy==1.13.1
 oauthlib==2.0.2
 olefile==0.44
-Pillow==4.1.1
+Pillow==8.1.1
 psycopg2==2.7.1
 PyGithub==1.35
 PyJWT==1.5.2
